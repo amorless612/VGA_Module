@@ -17,21 +17,33 @@ wire                                       [9:0] pix_x ;                       /
 wire                                       [9:0] pix_y ;                       //VGA 有效显示区域 Y 轴坐标
 wire                                      [11:0] pix_data;                     //VGA 像素点色彩信息
 
-//rst_n:VGA 模块复位信号
-assign rst_n            = (sys_rst_n & locked);
-//********************************************************************//
-//*************************** Instantiation **************************//
-//********************************************************************//
+////rst_n:VGA 模块复位信号
+//assign rst_n            = (sys_rst_n & locked);
+////********************************************************************//
+////*************************** Instantiation **************************//
+////********************************************************************//
+//
+////------------- clk_gen_inst -------------
+//clk_gen clk_gen_inst
+//    (
+//    .areset                            (~sys_rst_n                             ), //输入复位信号,高电平有效,1bit
+//    .inclk0                            (sys_clk                                ), //输入 50MHz 晶振时钟,1bit
+//
+//    .c0                                (vga_clk                                ), //输出 VGA 工作时钟,频率 25MHz,1bit
+//    .locked                            (locked                                 )  //输出 pll locked 信号,1bit
+//    );
 
-//------------- clk_gen_inst -------------
-clk_gen clk_gen_inst
-    (
-    .areset                            (~sys_rst_n                             ), //输入复位信号,高电平有效,1bit
-    .inclk0                            (sys_clk                                ), //输入 50MHz 晶振时钟,1bit
+assign rst_n            = sys_rst_n;
+assign vga_clk          = clk_div;
 
-    .c0                                (vga_clk                                ), //输出 VGA 工作时钟,频率 25MHz,1bit
-    .locked                            (locked                                 )  //输出 pll locked 信号,1bit
-    );
+reg clk_div;
+always @ (posedge clk or posedge )
+begin
+  if(rst_n == 1'b0)
+    clk_div             <= 1'b0; // 复位置零
+  else
+    clk_div             <= ~clk_div; // 否则q信号翻转
+end
 
 //------------- vga_ctrl_inst -------------
 vga_ctrl vga_ctrl_inst
