@@ -1,14 +1,14 @@
-module vga_ctrl
+module VGA_CTRL
     (
     input wire                                   vga_clk ,                     //输入工作时钟,频率 25MHz
     input wire                                   sys_rst_n ,                   //输入复位信号,低电平有效
     input wire                            [11:0] pix_data ,                    //输入像素点色彩信息
-     
+
     output wire                            [9:0] pix_x ,                       //输出有效显示区域像素点 X 轴坐标
     output wire                            [9:0] pix_y ,                       //输出有效显示区域像素点 Y 轴坐标
     output wire                                  hsync ,                       //输出行同步信号
     output wire                                  vsync ,                       //输出场同步信号
-    output wire                           [11:0] rgb                           //输出像素点色彩信息     
+    output wire                           [11:0] rgb                           //输出像素点色彩信息
     );
 
 //********************************************************************//

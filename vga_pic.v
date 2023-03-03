@@ -1,12 +1,12 @@
-module vga_pic
+module VGA_PIC
     (
     input wire                                   vga_clk ,                     //输入工作时钟,频率 25MHz
     input wire                                   sys_rst_n ,                   //输入复位信号,低电平有效
     input wire                             [9:0] pix_x ,                       //输入有效显示区域像素点 X 轴坐标
     input wire                             [9:0] pix_y ,                       //输入有效显示区域像素点 Y 轴坐标
-    
+
     output reg                            [11:0] pix_data                      //输出像素点色彩信息
-    
+
     );
 
 //********************************************************************//
