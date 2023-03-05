@@ -1,14 +1,14 @@
 module VGA_CTRL
     (
     input wire                                   vga_clk ,                     //输入工作时钟,频率 25MHz
-    input wire                                   sys_rst_n ,                   //输入复位信号,低电平有效
-    input wire                            [11:0] pix_data ,                    //输入像素点色彩信息
+    input wire                                   sys_rst_n ,                   //输入复位信号,低电平有�?
+    input wire                            [11:0] pix_data ,                    //输入像素点色彩信�?
 
-    output wire                            [9:0] pix_x ,                       //输出有效显示区域像素点 X 轴坐标
-    output wire                            [9:0] pix_y ,                       //输出有效显示区域像素点 Y 轴坐标
-    output wire                                  hsync ,                       //输出行同步信号
-    output wire                                  vsync ,                       //输出场同步信号
-    output wire                           [11:0] rgb                           //输出像素点色彩信息
+    output wire                            [9:0] pix_x ,                       //输出有效显示区域像素�? X 轴坐�?
+    output wire                            [9:0] pix_y ,                       //输出有效显示区域像素�? Y 轴坐�?
+    output wire                                  hsync ,                       //输出行同步信�?
+    output wire                                  vsync ,                       //输出场同步信�?
+    output wire                           [11:0] rgb                           //输出像素点色彩信�?
     );
 
 //********************************************************************//
@@ -16,24 +16,24 @@ module VGA_CTRL
 //********************************************************************//
 
 //parameter define
-parameter H_SYNC                       = 10'd96 ,                              //行同步
-          H_BACK                       = 10'd40 ,                              //行时序后沿
+parameter H_SYNC                       = 10'd96 ,                              //行同�?
+          H_BACK                       = 10'd40 ,                              //行时序后�?
           H_LEFT                       = 10'd8 ,                               //行时序左边框
-          H_VALID                      = 10'd640 ,                             //行有效数据
+          H_VALID                      = 10'd640 ,                             //行有效数�?
           H_RIGHT                      = 10'd8 ,                               //行时序右边框
-          H_FRONT                      = 10'd8 ,                               //行时序前沿
-          H_TOTAL                      = 10'd800 ;                             //行扫描周期
-parameter V_SYNC                       = 10'd2 ,                               //场同步
-          V_BACK                       = 10'd25 ,                              //场时序后沿
+          H_FRONT                      = 10'd8 ,                               //行时序前�?
+          H_TOTAL                      = 10'd800 ;                             //行扫描周�?
+parameter V_SYNC                       = 10'd2 ,                               //场同�?
+          V_BACK                       = 10'd25 ,                              //场时序后�?
           V_TOP                        = 10'd8 ,                               //场时序上边框
-          V_VALID                      = 10'd480 ,                             //场有效数据
+          V_VALID                      = 10'd480 ,                             //场有效数�?
           V_BOTTOM                     = 10'd8 ,                               //场时序下边框
-          V_FRONT                      = 10'd2 ,                               //场时序前沿
-          V_TOTAL                      = 10'd525 ;                             //场扫描周期
+          V_FRONT                      = 10'd2 ,                               //场时序前�?
+          V_TOTAL                      = 10'd525 ;                             //场扫描周�?
 
 //wire define
 wire                                             rgb_valid ;                   //VGA 有效显示区域
-wire                                             pix_data_req ;                //像素点色彩信息请求信号
+wire                                             pix_data_req ;                //像素点色彩信息请求信�?
 
 //reg define
 reg                                        [9:0] cnt_h ;                       //行同步信号计数器
@@ -55,7 +55,7 @@ begin
 end
 
 
-//hsync:行同步信号
+//hsync:行同步信�?
 assign hsync            = (cnt_h <= H_SYNC - 1'd1) ? 1'b1 : 1'b0 ;
 
 //cnt_v:场同步信号计数器
@@ -71,22 +71,51 @@ begin
     cnt_v               <= cnt_v ;
 end
 
-//vsync:场同步信号
+//vsync:场同步信�?
 assign vsync            = (cnt_v <= V_SYNC - 1'd1) ? 1'b1 : 1'b0 ;
 
 //rgb_valid:VGA 有效显示区域
 assign rgb_valid        = (((cnt_h >= H_SYNC + H_BACK + H_LEFT) && (cnt_h < H_SYNC + H_BACK + H_LEFT + H_VALID)) &&
                            ((cnt_v >= V_SYNC + V_BACK + V_TOP)   && (cnt_v < V_SYNC + V_BACK + V_TOP + V_VALID))) ? 1'b1 : 1'b0;
 
-//pix_data_req:像素点色彩信息请求信号,超前 rgb_valid 信号一个时钟周期
+//pix_data_req:像素点色彩信息请求信�?,超前 rgb_valid 信号�?个时钟周�?
 assign pix_data_req     = (((cnt_h >= H_SYNC + H_BACK + H_LEFT - 1'b1) && (cnt_h<H_SYNC + H_BACK + H_LEFT + H_VALID - 1'b1)) &&
                            ((cnt_v >= V_SYNC + V_BACK + V_TOP)         && (cnt_v < V_SYNC + V_BACK + V_TOP + V_VALID))) ? 1'b1 : 1'b0;
 
-//pix_x,pix_y:VGA 有效显示区域像素点坐标
-assign pix_x            = (pix_data_req == 1'b1) ? (cnt_h - (H_SYNC + H_BACK + H_LEFT - 1'b1)) : 10'h3ff;
-assign pix_y            = (pix_data_req == 1'b1) ? (cnt_v - (V_SYNC + V_BACK + V_TOP)) : 10'h3ff;
+//pix_x,pix_y:VGA 有效显示区域像素点坐�?
+//assign pix_x            = (pix_data_req == 1'b1) ? (cnt_h - (H_SYNC + H_BACK + H_LEFT - 1'b1)) : 10'h3ff;
+//assign pix_y            = (pix_data_req == 1'b1) ? (cnt_v - (V_SYNC + V_BACK + V_TOP)) : 10'h3ff;
 
-//rgb:输出像素点色彩信息
+reg [9:0] input_x;
+reg [9:0] input_y;
+//cnt_v:场同步信号计数器
+always@(posedge vga_clk or negedge sys_rst_n)
+begin
+  if(sys_rst_n == 1'b0)
+    input_x               <= 10'd200 ;
+  else if(input_x ==  10'd400)
+    input_x               <= 10'd200 ;
+  else
+    input_x               <= input_x + 1'd1 ;
+end
+
+//cnt_v:场同步信号计数器
+always@(posedge vga_clk or negedge sys_rst_n)
+begin
+  if(sys_rst_n == 1'b0)
+    input_y               <= 10'd200 ;
+  else if((input_y ==  10'd400) && (input_x ==  10'd400))
+    input_y               <= 10'd200 ;
+  else if(input_x ==  10'd400)
+    input_y               <= input_y + 1'd1 ;
+  else
+    input_y               <= input_y;
+end
+
+assign pix_x            = (pix_data_req == 1'b1) ? (input_x) : 10'h3ff;
+assign pix_y            = (pix_data_req == 1'b1) ? (input_y) : 10'h3ff; 
+
+//rgb:输出像素点色彩信�?
 assign rgb              = (rgb_valid == 1'b1) ? pix_data : 11'b0 ;
 
 endmodule
