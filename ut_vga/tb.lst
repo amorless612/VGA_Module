@@ -1,0 +1,4 @@
+./harness.sv
+../rtl/vga_top.v
+../rtl/vga_pic.v
+../rtl/vga_ctrl.v
