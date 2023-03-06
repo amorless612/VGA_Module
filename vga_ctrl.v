@@ -83,37 +83,8 @@ assign pix_data_req     = (((cnt_h >= H_SYNC + H_BACK + H_LEFT - 1'b1) && (cnt_h
                            ((cnt_v >= V_SYNC + V_BACK + V_TOP)         && (cnt_v < V_SYNC + V_BACK + V_TOP + V_VALID))) ? 1'b1 : 1'b0;
 
 //pix_x,pix_y:VGA 有效显示区域像素点坐�?
-//assign pix_x            = (pix_data_req == 1'b1) ? (cnt_h - (H_SYNC + H_BACK + H_LEFT - 1'b1)) : 10'h3ff;
-//assign pix_y            = (pix_data_req == 1'b1) ? (cnt_v - (V_SYNC + V_BACK + V_TOP)) : 10'h3ff;
-
-reg [9:0] input_x;
-reg [9:0] input_y;
-//cnt_v:场同步信号计数器
-always@(posedge vga_clk or negedge sys_rst_n)
-begin
-  if(sys_rst_n == 1'b0)
-    input_x               <= 10'd200 ;
-  else if(input_x ==  10'd400)
-    input_x               <= 10'd200 ;
-  else
-    input_x               <= input_x + 1'd1 ;
-end
-
-//cnt_v:场同步信号计数器
-always@(posedge vga_clk or negedge sys_rst_n)
-begin
-  if(sys_rst_n == 1'b0)
-    input_y               <= 10'd200 ;
-  else if((input_y ==  10'd400) && (input_x ==  10'd400))
-    input_y               <= 10'd200 ;
-  else if(input_x ==  10'd400)
-    input_y               <= input_y + 1'd1 ;
-  else
-    input_y               <= input_y;
-end
-
-assign pix_x            = (pix_data_req == 1'b1) ? (input_x) : 10'h3ff;
-assign pix_y            = (pix_data_req == 1'b1) ? (input_y) : 10'h3ff; 
+assign pix_x            = (pix_data_req == 1'b1) ? (cnt_h - (H_SYNC + H_BACK + H_LEFT - 1'b1)) : 10'h3ff;
+assign pix_y            = (pix_data_req == 1'b1) ? (cnt_v - (V_SYNC + V_BACK + V_TOP)) : 10'h3ff;
 
 //rgb:输出像素点色彩信�?
 assign rgb              = (rgb_valid == 1'b1) ? pix_data : 11'b0 ;
