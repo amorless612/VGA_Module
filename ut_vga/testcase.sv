@@ -31,7 +31,19 @@ initial begin
   char_y_start = 10'd100;
   char_y_end  = 10'd150;
   char_color = 4'd1;
-  #100000000
+  #200000000
+  char_x_start = 10'd250;
+  char_x_end  = 10'd300;
+  char_y_start = 10'd250;
+  char_y_end  = 10'd300;
+  char_color  = 4'd3;
+  #200000000
+  char_x_start = 10'd175;
+  char_x_end  = 10'd275;
+  char_y_start = 10'd175;
+  char_y_end  = 10'd275;
+  char_color  = 4'd4;
+  #200000000
   $finish;
 end
 

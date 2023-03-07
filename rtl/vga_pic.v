@@ -41,9 +41,7 @@ parameter CHAR_W                       = 10'd256 , //字符宽度
           CHAR_H                       = 10'd64 ;  //字符高度
 
 
-reg    [3:0]     dina;			      //写入的数据
 wire   [3:0]     doutb;			      //输出的数据
-wire             wea;			        //写有效信号
 reg    [3:0]     mem [0:307200];	//定义RAM
 
 integer i;
@@ -54,34 +52,25 @@ integer i;
     end
 end
 
-assign wea = 1'b1;
-
 wire [9:0] input_x;
 wire [9:0] input_y;
-assign input_x= (pix_x == 10'd1023) ? 10'd640 : pix_x;
-assign input_y= (pix_y == 10'd1023) ? 10'd480 : pix_y;
+assign input_x= (pix_x == 10'd1023) ? 10'd0 : (pix_x + 1);
+assign input_y= (pix_y == 10'd1023) ? 10'd1 : (pix_y + 1);
 
-always @*
+always @(posedge vga_clk)
 begin
-  dina = dina;
-  if(((input_x >= (char_x_start - 1'b1)) && (input_x < (char_x_end -1'b1))) &&
-     ((input_y >=  char_y_start        ) && (input_y < (char_y_end      ))))
-    dina = char_color;
-  else if((input_x == 10'd640) && (input_y == 10'd480))
-    dina = 4'd7;
+  if((input_x == 10'd0) && (input_y == 10'd1))
+  begin
+    mem[input_x + (input_y-1)*640] <= 4'd7;
+  end
+  else if(((input_x >= (char_x_start )) && (input_x < (char_x_end ))) &&
+          ((input_y >=  char_y_start + 1'b1) && (input_y < (char_y_end + 1'b1))))
+    mem[input_x + (input_y-1)*640] <= char_color;
   else
-    dina = 4'd7;
+    mem[input_x + (input_y-1)*640] <= mem[input_x + (input_y-1)*640];
 end
 
-always@ (posedge vga_clk)
-begin
-  if(wea == 1'b1)							//写有效时候，把dina写入到addra处
-    begin
-      mem[input_x + input_y*640] <= dina;
-    end
-end
-
-assign doutb = mem[input_x + input_y*640];
+assign doutb = mem[input_x + (input_y-1)*640];
 
 reg [11:0] color;
 always@*
