@@ -1,2 +1,2 @@
-# VGA_CTRL
+# An APB VGA Ctrl module
  
