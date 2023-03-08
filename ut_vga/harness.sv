@@ -13,22 +13,26 @@ module harness;
 // -------------------------------------------------------------------
 // Constant Parameter
 // -------------------------------------------------------------------
-parameter PERIOD_CLK                   = 50 ;
-
+parameter PERIOD_CLK                   = 50;
+parameter ADDR_WIDTH                   = 12;
+parameter DATA_WIDTH                   = 32;
 // -------------------------------------------------------------------
 // Internal Signals Declarations
 // -------------------------------------------------------------------
-logic  sys_clk;
-logic  sys_rst_n;
-logic  vsync;
-logic  hsync;
-logic [11:0]rgb;
+logic                                       pclk;
+logic                                       preset_n;
+logic                                       psel;
+logic                                       penable;
+logic                                       pwrite;
+logic                      [ADDR_WIDTH-1:0] paddr;
+logic                      [DATA_WIDTH-1:0] pwdata;
+logic                      [DATA_WIDTH-1:0] prdata;
+logic                                       pready;
+logic                                       pslverr;
 
-logic                                 [9:0] char_x_start;
-logic                                 [9:0] char_x_end;
-logic                                 [9:0] char_y_start;
-logic                                 [9:0] char_y_end;
-logic                                 [3:0] char_color;
+logic                                       hsync;
+logic                                       vsync;
+logic                                [11:0] rgb;
 // -------------------------------------------------------------------
 // fadb wave
 // -------------------------------------------------------------------
@@ -44,13 +48,13 @@ end
 // clock & reset
 // -------------------------------------------------------------------
 initial begin
-  sys_clk                  = 1'b0;
-  sys_rst_n                = 1'b1;
-  # 100 sys_rst_n          = 1'b0;
-  # 100 sys_rst_n          = 1'b1;
+  pclk                    = 1'b0;
+  preset_n                = 1'b1;
+  # 100 preset_n          = 1'b0;
+  # 100 preset_n          = 1'b1;
 end
 
-always #(PERIOD_CLK/2) sys_clk = ~ sys_clk;
+always #(PERIOD_CLK/2) pclk = ~ pclk;
 
 // -------------------------------------------------------------------
 // Main Code
@@ -60,18 +64,27 @@ always #(PERIOD_CLK/2) sys_clk = ~ sys_clk;
 `include "./testcase.sv"
 
 // -----------------> DUT Instance
-VGA_TOP U_VGA_TOP
+VGA_TOP
+  # (
+    .ADDR_WIDTH                        (ADDR_WIDTH                             ),
+    .DATA_WIDTH                        (DATA_WIDTH                             )
+    )
+    U_VGA_TOP
     (
-    .sys_clk                           (sys_clk                                ),   //输入工作时钟,频率 50MHz
-    .sys_rst_n                         (sys_rst_n                              ),   //输入复位信号,低电平有效
-    .hsync                             (hsync                                  ),   //输出行同步信号
-    .vsync                             (vsync                                  ),   //输出场同步信号
-    .rgb                               (rgb                                    ),   //输出像素信息
-    .char_x_start                      (char_x_start                           ),
-    .char_x_end                        (char_x_end                             ),
-    .char_y_start                      (char_y_start                           ),
-    .char_y_end                        (char_y_end                             ),
-    .char_color                        (char_color                             )
+    .pclk                              (pclk                                   ),
+    .preset_n                          (preset_n                               ),
+    .psel                              (psel                                   ),
+    .penable                           (penable                                ),
+    .pwrite                            (pwrite                                 ),
+    .paddr                             (paddr                                  ),
+    .pwdata                            (pwdata                                 ),
+    .prdata                            (prdata                                 ),
+    .pready                            (pready                                 ),
+    .pslverr                           (pslverr                                ),
+
+    .hsync                             (hsync                                  ),   //输出行同步信�?
+    .vsync                             (vsync                                  ),   //输出场同步信�?
+    .rgb                               (rgb                                    )    //输出像素信息
     );
 // -------------------------------------------------------------------
 // Assertion Declarations

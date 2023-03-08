@@ -1,20 +1,31 @@
 module VGA_TOP
+  # (
+    parameter ADDR_WIDTH               = 12,
+    parameter DATA_WIDTH               = 32
+    )
     (
-    input  wire                                  sys_clk ,                     //输入工作时钟,频率 50MHz
-    input  wire                                  sys_rst_n ,                   //输入复位信号,低电平有�?
-    output wire                                  hsync ,                       //输出行同步信�?
-    output wire                                  vsync ,                       //输出场同步信�?
-    output wire                           [11:0] rgb,                          //输出像素信息
-    input wire                             [9:0] char_x_start,
-    input wire                             [9:0] char_x_end,
-    input wire                             [9:0] char_y_start,
-    input wire                             [9:0] char_y_end,
-    input wire                             [3:0] char_color
+    input                                        pclk,
+    input                                        preset_n,
+    input                                        psel,
+    input                                        penable,
+    input                                        pwrite,
+    input                       [ADDR_WIDTH-1:0] paddr,
+    input                       [DATA_WIDTH-1:0] pwdata,
+    output reg                  [DATA_WIDTH-1:0] prdata,
+    output                                       pready,
+    output reg                                   pslverr,
+
+    output wire                                  hsync,                        //输出行同步信�?
+    output wire                                  vsync,                        //输出场同步信�?
+    output wire                           [11:0] rgb                           //输出像素信息
     );
 //********************************************************************//
 //****************** Parameter and Internal Signal *******************//       //640*480@60
 //********************************************************************//
 //wire define
+wire                                             sys_clk;                      //输入工作时钟,频率 50MHz
+wire                                             sys_rst_n;                    //输入复位信号,低电平有�?
+
 wire                                             clk;
 wire                                             vga_clk ;                     //VGA 工作时钟,频率 25MHz
 wire                                             locked ;                      //PLL locked 信号
@@ -22,6 +33,15 @@ wire                                             rst_n ;                       /
 wire                                       [9:0] pix_x ;                       //VGA 有效显示区域 X 轴坐�?
 wire                                       [9:0] pix_y ;                       //VGA 有效显示区域 Y 轴坐�?
 wire                                      [11:0] pix_data;                     //VGA 像素点色彩信�?
+
+wire                                       [9:0] char_x_start;
+wire                                       [9:0] char_x_end;
+wire                                       [9:0] char_y_start;
+wire                                       [9:0] char_y_end;
+wire                                       [3:0] char_color;
+
+assign sys_clk           = pclk;
+assign sys_rst_n         = preset_n;
 
 //rst_n:VGA 模块复位信号
 assign rst_n             = sys_rst_n;
@@ -83,4 +103,30 @@ VGA_PIC U_VGA_PIC
     .pix_data                          (pix_data                               )  //输出像素点色彩信�?,12bit
     );
 
- endmodule
+//------------- vga_csr ------------------
+VGA_CSR
+   #(
+    .ADDR_WIDTH                        (ADDR_WIDTH                             ),
+    .DATA_WIDTH                        (DATA_WIDTH                             )
+    )
+    U_VGA_CSR
+    (
+    .pclk                              (pclk                                   ),
+    .preset_n                          (preset_n                               ),
+    .psel                              (psel                                   ),
+    .penable                           (penable                                ),
+    .pwrite                            (pwrite                                 ),
+    .paddr                             (paddr                                  ),
+    .pwdata                            (pwdata                                 ),
+    .prdata                            (prdata                                 ),
+    .pready                            (pready                                 ),
+    .pslverr                           (pslverr                                ),
+
+    .char_x_start                      (char_x_start                           ),
+    .char_x_end                        (char_x_end                             ),
+    .char_y_start                      (char_y_start                           ),
+    .char_y_end                        (char_y_end                             ),
+    .char_color                        (char_color                             )
+    );
+
+endmodule
