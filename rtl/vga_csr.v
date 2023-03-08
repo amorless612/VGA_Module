@@ -1,6 +1,5 @@
 module VGA_CSR
   # (
-    parameter UART_CSR_LOCK_VAL        = 32'h5a5a5a5a,
     parameter ADDR_WIDTH               = 12,
     parameter DATA_WIDTH               = 32
     )
