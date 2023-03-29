@@ -1,0 +1,8 @@
+./harness.sv
+../rtl/vga_top.v
+../rtl/vga_pic.v
+../rtl/vga_ctrl.v
+../rtl/vga_reg_rw.v
+../rtl/vga_csr.v
+../rtl/vga_afifo.v
+../rtl/cm_rs_vr.v

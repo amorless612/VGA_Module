@@ -1,0 +1,6 @@
+/home/host/code/vga_ctrl/rtl/vga_top.v
+/home/host/code/vga_ctrl/rtl/vga_pic.v
+/home/host/code/vga_ctrl/rtl/vga_ctrl.v
+/home/host/code/vga_ctrl/rtl/vga_reg_rw.v
+/home/host/code/vga_ctrl/rtl/vga_csr.v
+
