@@ -1,2 +1,2 @@
-# A Simple APB-VGA-Ctrl Module
+# A Simple VGA control module with APB interface.
  
